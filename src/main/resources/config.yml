@@ -1,6 +1,6 @@
 items:
-  # Define an object with the id "log".
-  log:
+  # Define an object with the id "custom-log".
+  custom-log:
     # Preferably, copy the NBT with the command /betterdrops nbt
     NBT: '{id:"minecraft:log",Count:2b,Damage:0s}'
     # The probability of obtaining this object, in percentage.
@@ -9,8 +9,8 @@ items:
     commands:
       - 'msg <player> &aYou got lucky! x2 &6LOG'
 
-  # Define an object with the id "diamond".
-  diamond:
+  # Define an object with the id "custom-diamond".
+  custom-diamond:
     # Preferably, copy the NBT with the command /betterdrops nbt
     NBT: '{id:"minecraft:diamond",Count:1b,Damage:0s}'
     # The probability of obtaining this object, in percentage.
@@ -30,10 +30,10 @@ drops-block:
       - 'world'
     # The list of objects that can be dropped.
     items:
-      - 'log'
+      - 'custom-log'
 
 drops-entity:
-  diamond-cow-drop:
+  cow-drop:
     # If set to true, the originally dropped items are kept.
     keep-original-drops: true
     # The type of entity that drops the object.
@@ -43,4 +43,4 @@ drops-entity:
       - 'world'
     # The list of objects that can be dropped.
     items:
-      - 'diamond'
+      - 'custom-diamond'
