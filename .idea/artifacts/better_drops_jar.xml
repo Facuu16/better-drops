@@ -4,7 +4,6 @@
     <root id="archive" name="better-drops.jar">
       <element id="module-output" name="better-drops" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/de/tr7zw/item-nbt-api-plugin/2.11.1/item-nbt-api-plugin-2.11.1.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/rysefoxx/inventory/RyseInventory-Plugin/1.5.7/RyseInventory-Plugin-1.5.7.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
