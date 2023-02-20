@@ -1,0 +1,13 @@
+main: com.facuu16.betterdrops.BetterDrops
+name: BetterDrops
+api-version: 1.8.8
+version: 1.0.0
+
+commands:
+  betterdrops:
+    description: '§fBetterDrops main command.'
+    aliases:
+      - 'bd'
+    permission: 'betterdrops.commands.main'
+    permission-message: '§cYou do not have permission!'
+    usage: '§7Available Commands: §f/betterdrops <reload, nbt>'
