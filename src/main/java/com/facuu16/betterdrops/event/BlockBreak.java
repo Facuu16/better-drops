@@ -1,4 +1,4 @@
-package com.facuu16.betterdrops.listener;
+package com.facuu16.betterdrops.event;
 
 import com.facuu16.betterdrops.BetterDrops;
 import com.facuu16.betterdrops.drop.*;
@@ -17,10 +17,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-public class BlockBreakListener implements Listener {
+public class BlockBreak implements Listener {
     private final BetterDrops plugin;
 
-    public BlockBreakListener(BetterDrops plugin) {
+    public BlockBreak(BetterDrops plugin) {
         this.plugin = plugin;
     }
 

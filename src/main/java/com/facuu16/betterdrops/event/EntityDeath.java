@@ -1,4 +1,4 @@
-package com.facuu16.betterdrops.listener;
+package com.facuu16.betterdrops.event;
 
 import com.facuu16.betterdrops.BetterDrops;
 import com.facuu16.betterdrops.drop.DropEntity;
@@ -19,10 +19,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Map;
 
-public class EntityDeathListener implements Listener {
+public class EntityDeath implements Listener {
     private final BetterDrops plugin;
 
-    public EntityDeathListener(BetterDrops plugin) {
+    public EntityDeath(BetterDrops plugin) {
         this.plugin = plugin;
     }
 
