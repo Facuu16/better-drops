@@ -15,13 +15,13 @@ public class BetterDrops extends JavaPlugin {
     @Override
     public void onEnable() {
         registerConfig();
-        initialize();
+        registerManagers();
         registerEvents();
         registerCommands();
         getLogger().info("BetterDrops " + getDescription().getVersion() + " started successfully, by: Facuu16.");
     }
 
-    private void initialize() {
+    private void registerManagers() {
         DropManager.getInstance(this).reload();
         getLogger().info("Managers loaded.");
     }
