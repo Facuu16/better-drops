@@ -38,7 +38,7 @@ public abstract class Drop {
         return id;
     }
 
-    public boolean getKeep() {
+    public boolean isKeep() {
         return keepOriginalDrops;
     }
 

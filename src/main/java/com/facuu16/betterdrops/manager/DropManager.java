@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import java.util.*;
+
 public class DropManager {
     private final Map<DropType, Map<String, Drop>> dropMap = new EnumMap<>(DropType.class);
 
@@ -118,7 +119,8 @@ public class DropManager {
                     addDrop(DropType.ENTITY, new DropEntity(dropId, keepOriginalDrops, worlds, droppables, entity));
                 }
             } catch (NbtApiException | NullPointerException | IllegalArgumentException exception) {
-                plugin.getLogger().severe("There was an error loading the " + dropType.name().toLowerCase() + ": " + dropId);
+                plugin.getLogger().severe("There was an error loading the "
+                        + dropType.name().toLowerCase() + ": " + dropId);
             }
         }
     }

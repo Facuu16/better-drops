@@ -49,7 +49,7 @@ public class BlockBreak implements Listener {
                 if (droppable.getProbability() < Math.random() * 100)
                     continue;
 
-                if (!dropBlock.getKeep() && !removed) {
+                if (!dropBlock.isKeep() && !removed) {
                     removed = true;
                     event.setCancelled(true);
                     block.setType(Material.AIR);
