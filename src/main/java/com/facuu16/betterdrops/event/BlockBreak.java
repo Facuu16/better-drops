@@ -64,7 +64,7 @@ public class BlockBreak implements Listener {
                     Player player = event.getPlayer();
 
                     if (player != null)
-                        command = command.replaceAll("<player>", player.getName());
+                        command = command.replace("<player>", player.getName());
 
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
                 }
