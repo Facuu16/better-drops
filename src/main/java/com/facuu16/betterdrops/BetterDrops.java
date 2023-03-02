@@ -47,7 +47,7 @@ public class BetterDrops extends JavaPlugin {
         }
     }
 
-    public static String colorize(String text) {
+    public String translate(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 }

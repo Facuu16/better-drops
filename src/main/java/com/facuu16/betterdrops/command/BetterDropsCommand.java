@@ -28,7 +28,7 @@ public class BetterDropsCommand implements CommandExecutor {
             case "reload":
                 plugin.reloadConfig();
                 DropManager.getInstance(plugin).reload();
-                sender.sendMessage(BetterDrops.colorize("&aConfig reloaded successfully"));
+                sender.sendMessage(plugin.translate("&aConfig reloaded successfully"));
                 break;
 
             case "nbt":
@@ -43,15 +43,15 @@ public class BetterDropsCommand implements CommandExecutor {
                     ItemStack item = player.getInventory().getItemInHand();
                     NBTCompound itemNBT = NBTItem.convertItemtoNBT(item);
 
-                    TextComponent message = new TextComponent(BetterDrops.colorize("&7[CLICK TO COPY] &c&lNBT &7-> " + itemNBT));
-                    BaseComponent[] componentBuilder = new ComponentBuilder(BetterDrops.colorize("&aCLICK TO COPY"))
+                    TextComponent message = new TextComponent(plugin.translate("&7[CLICK TO COPY] &c&lNBT &7-> " + itemNBT));
+                    BaseComponent[] componentBuilder = new ComponentBuilder(plugin.translate("&aCLICK TO COPY"))
                             .create();
 
                     message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, componentBuilder));
                     message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, itemNBT.toString()));
                     player.spigot().sendMessage(message);
                 } catch (NbtApiException | NullPointerException exception) {
-                    player.sendMessage(BetterDrops.colorize("&cYou must hold an item in hand!"));
+                    player.sendMessage(plugin.translate("&cYou must hold an item in hand!"));
                 }
                 break;
         }
