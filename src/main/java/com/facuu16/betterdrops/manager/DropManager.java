@@ -26,8 +26,10 @@ public class DropManager {
     }
 
     public static DropManager getInstance(BetterDrops plugin) {
-        if (instance == null)
+        if (instance == null) {
             instance = new DropManager(plugin);
+            instance.reload();
+        }
 
         return instance;
     }
@@ -98,7 +100,7 @@ public class DropManager {
             final ConfigurationSection drop = drops.getConfigurationSection(dropId);
             final List<Droppable> droppables = new ArrayList<>();
 
-            clearDrops(dropType);
+            clearDrops(dropType); // temporary
 
             try {
                 for (String id : drop.getStringList("items")) {

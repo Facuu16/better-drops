@@ -22,7 +22,7 @@ public class BetterDrops extends JavaPlugin {
     }
 
     private void registerManagers() {
-        DropManager.getInstance(this).reload();
+        DropManager.getInstance(this);
         getLogger().info("Managers loaded.");
     }
 
