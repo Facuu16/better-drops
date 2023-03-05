@@ -12,7 +12,7 @@ import org.bukkit.entity.EntityType;
 import java.util.*;
 
 public class DropManager {
-    private final Map<DropType, Map<String, Drop>> dropMap = new EnumMap<>(DropType.class);
+    private final Map<DropType, Map<String, Drop>> drops = new EnumMap<>(DropType.class);
 
     private final BetterDrops plugin;
 
@@ -22,7 +22,7 @@ public class DropManager {
         this.plugin = plugin;
 
         for (DropType type : DropType.values())
-            dropMap.put(type, new HashMap<>());
+            drops.put(type, new HashMap<>());
     }
 
     public static DropManager getInstance(BetterDrops plugin) {
@@ -34,28 +34,28 @@ public class DropManager {
         return instance;
     }
 
-    public void addDrop(DropType type, Drop drop) {
-        dropMap.get(type).put(drop.getId(), drop);
+    public void setDrop(DropType type, Drop drop) {
+        drops.get(type).put(drop.getId(), drop);
     }
 
     public void removeDrop(DropType type, String id) {
-        dropMap.get(type).remove(id);
-    }
-
-    public void clearDrops(DropType type) {
-        dropMap.get(type).clear();
+        drops.get(type).remove(id);
     }
 
     public Drop getDrop(DropType type, String id) {
-         return dropMap.get(type).get(id);
+        return drops.get(type).get(id);
     }
 
     public Map<String, Drop> getDrops(DropType type) {
-        return dropMap.get(type);
+        return drops.get(type);
     }
 
-    public boolean contains(DropType type, String id) {
-        return dropMap.get(type).containsKey(id);
+    public boolean containsDrop(DropType type, String id) {
+        return drops.get(type).containsKey(id);
+    }
+
+    public void removeDrops(DropType type) {
+        drops.get(type).clear();
     }
 
     public void reload() throws NbtApiException, NullPointerException, IllegalArgumentException {
@@ -100,8 +100,6 @@ public class DropManager {
             final ConfigurationSection drop = drops.getConfigurationSection(dropId);
             final List<Droppable> droppables = new ArrayList<>();
 
-            clearDrops(dropType); // temporary
-
             try {
                 for (String id : drop.getStringList("items")) {
                     if (items.containsKey(id))
@@ -113,12 +111,12 @@ public class DropManager {
 
                 if (dropType == DropType.BLOCK) {
                     Material block = Material.valueOf(drop.getString("block"));
-                    addDrop(DropType.BLOCK, new DropBlock(dropId, keepOriginalDrops, worlds, droppables, block));
+                    setDrop(DropType.BLOCK, new DropBlock(dropId, keepOriginalDrops, worlds, droppables, block));
                 }
 
                 else if (dropType == DropType.ENTITY) {
                     EntityType entity = EntityType.valueOf(drop.getString("entity"));
-                    addDrop(DropType.ENTITY, new DropEntity(dropId, keepOriginalDrops, worlds, droppables, entity));
+                    setDrop(DropType.ENTITY, new DropEntity(dropId, keepOriginalDrops, worlds, droppables, entity));
                 }
             } catch (NbtApiException | NullPointerException | IllegalArgumentException exception) {
                 plugin.getLogger().severe("There was an error loading the "
