@@ -34,7 +34,7 @@ public class DropManager {
         return instance;
     }
 
-    public void setDrop(DropType type, Drop drop) {
+    public void putDrop(DropType type, Drop drop) {
         drops.get(type).put(drop.getId(), drop);
     }
 
@@ -46,19 +46,19 @@ public class DropManager {
         return drops.get(type).get(id);
     }
 
-    public Map<String, Drop> getDrops(DropType type) {
-        return drops.get(type);
-    }
-
     public boolean containsDrop(DropType type, String id) {
         return drops.get(type).containsKey(id);
+    }
+
+    public Map<String, Drop> getDrops(DropType type) {
+        return drops.get(type);
     }
 
     public void removeDrops(DropType type) {
         drops.get(type).clear();
     }
 
-    public void reload() throws NbtApiException, NullPointerException, IllegalArgumentException {
+    public void reload() {
         final FileConfiguration config = plugin.getConfig();
 
         if (config == null) {
@@ -88,11 +88,11 @@ public class DropManager {
         final ConfigurationSection blocksSection = config.getConfigurationSection("drops-block");
         final ConfigurationSection entitiesSection = config.getConfigurationSection("drops-entity");
 
-        processDrops(DropType.BLOCK, blocksSection, items);
-        processDrops(DropType.ENTITY, entitiesSection, items);
+        processDrop(DropType.BLOCK, blocksSection, items);
+        processDrop(DropType.ENTITY, entitiesSection, items);
     }
 
-    private void processDrops(DropType dropType, ConfigurationSection drops, Map<String, Droppable> items) {
+    private void processDrop(DropType dropType, ConfigurationSection drops, Map<String, Droppable> items) {
         if (drops == null)
             return;
 
@@ -101,22 +101,21 @@ public class DropManager {
             final List<Droppable> droppables = new ArrayList<>();
 
             try {
-                for (String id : drop.getStringList("items")) {
+                for (String id : drop.getStringList("items"))
                     if (items.containsKey(id))
                         droppables.add(items.get(id));
-                }
 
                 final boolean keepOriginalDrops = drop.getBoolean("keep-original-drops");
                 final List<String> worlds = drop.getStringList("worlds");
 
                 if (dropType == DropType.BLOCK) {
                     Material block = Material.valueOf(drop.getString("block"));
-                    setDrop(DropType.BLOCK, new DropBlock(dropId, keepOriginalDrops, worlds, droppables, block));
+                    putDrop(DropType.BLOCK, new DropBlock(dropId, keepOriginalDrops, worlds, droppables, block));
                 }
 
                 else if (dropType == DropType.ENTITY) {
                     EntityType entity = EntityType.valueOf(drop.getString("entity"));
-                    setDrop(DropType.ENTITY, new DropEntity(dropId, keepOriginalDrops, worlds, droppables, entity));
+                    putDrop(DropType.ENTITY, new DropEntity(dropId, keepOriginalDrops, worlds, droppables, entity));
                 }
             } catch (NbtApiException | NullPointerException | IllegalArgumentException exception) {
                 plugin.getLogger().severe("There was an error loading the "
