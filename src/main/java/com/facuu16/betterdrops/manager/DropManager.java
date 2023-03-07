@@ -46,12 +46,12 @@ public class DropManager {
         return drops.get(type).get(id);
     }
 
-    public boolean containsDrop(DropType type, String id) {
-        return drops.get(type).containsKey(id);
-    }
-
     public Map<String, Drop> getDrops(DropType type) {
         return drops.get(type);
+    }
+
+    public boolean containsDrop(DropType type, String id) {
+        return drops.get(type).containsKey(id);
     }
 
     public void removeDrops(DropType type) {
