@@ -69,19 +69,17 @@ public class DropManager {
         final ConfigurationSection itemsSection = config.getConfigurationSection("items");
         final Map<String, Droppable> items = new HashMap<>();
 
-        if (itemsSection != null) {
-            for (String itemId : itemsSection.getKeys(false)) {
-                final ConfigurationSection itemSection = itemsSection.getConfigurationSection(itemId);
+        for (String itemId : itemsSection.getKeys(false)) {
+            final ConfigurationSection itemSection = itemsSection.getConfigurationSection(itemId);
 
-                try {
-                    items.put(itemId, new Droppable(
-                            NBT.parseNBT(itemSection.getString("NBT")),
-                            itemSection.getDouble("probability"),
-                            itemSection.getStringList("commands")
-                    ));
-                } catch (NbtApiException | NullPointerException exception) {
+            try {
+                items.put(itemId, new Droppable(
+                        NBT.parseNBT(itemSection.getString("NBT")),
+                        itemSection.getDouble("probability"),
+                        itemSection.getStringList("commands")
+                ));
+            } catch (NbtApiException | NullPointerException exception) {
                     plugin.getLogger().severe("There was an error processing the item: " + itemId);
-                }
             }
         }
 
