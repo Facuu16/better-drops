@@ -47,7 +47,7 @@ public class EntityDeath implements Listener {
                 if (droppable.getProbability() < Math.random() * 100)
                     continue;
 
-                if (!dropEntity.isKeep() && !removed) {
+                if (!dropEntity.getKeep() && !removed) {
                     removed = true;
                     eventDrops.clear();
                 }

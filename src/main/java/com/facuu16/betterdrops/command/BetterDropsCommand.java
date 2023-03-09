@@ -12,6 +12,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.logging.Level;
+
 public class BetterDropsCommand implements CommandExecutor {
     private final BetterDrops plugin;
 
@@ -24,10 +26,16 @@ public class BetterDropsCommand implements CommandExecutor {
         if (args.length < 1)
             return false;
 
-        switch (args[0]) {
+        switch (args[0].toLowerCase()) {
             case "reload":
+                try {
+                    DropManager.getInstance(plugin).reload();
+                } catch (Exception exception) {
+                    plugin.getLogger()
+                            .log(Level.SEVERE, "An error occurred while reloading the configuration", exception);
+                }
+
                 plugin.reloadConfig();
-                DropManager.getInstance(plugin).reload();
                 sender.sendMessage(plugin.translate("&aConfig reloaded successfully"));
                 break;
 

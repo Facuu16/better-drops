@@ -6,10 +6,11 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NbtApiException;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class DropManager {
     private final Map<DropType, Map<String, Drop>> drops = new EnumMap<>(DropType.class);
@@ -28,13 +29,19 @@ public class DropManager {
     public static DropManager getInstance(BetterDrops plugin) {
         if (instance == null) {
             instance = new DropManager(plugin);
-            instance.reload();
+
+            try {
+                instance.reload();
+            } catch (Exception exception) {
+                plugin.getLogger()
+                        .log(Level.SEVERE, "An error occurred while reloading the configuration", exception);
+            }
         }
 
         return instance;
     }
 
-    public void putDrop(DropType type, Drop drop) {
+    public void updateDrop(DropType type, Drop drop) {
         drops.get(type).put(drop.getId(), drop);
     }
 
@@ -58,67 +65,48 @@ public class DropManager {
         drops.get(type).clear();
     }
 
-    public void reload() {
-        final FileConfiguration config = plugin.getConfig();
+    public void reload() throws NullPointerException, NbtApiException, IllegalArgumentException {
+        final ConfigurationSection items = plugin.getConfig()
+                .getConfigurationSection("items");
 
-        if (config == null) {
-            plugin.getLogger().severe("The config.yml file was not found");
-            return;
-        }
+        final List<Droppable> droppables = items.getKeys(false)
+                .stream()
+                .map(itemId -> {
+                    final ConfigurationSection item = items.getConfigurationSection(itemId);
+                    return new Droppable(
+                            item.getName(),
+                            NBT.parseNBT(item.getString("NBT")),
+                            item.getDouble("probability"),
+                            item.getStringList("commands")
+                    );
+                })
+                .collect(Collectors.toList());
 
-        final ConfigurationSection itemsSection = config.getConfigurationSection("items");
-        final Map<String, Droppable> items = new HashMap<>();
-
-        for (String itemId : itemsSection.getKeys(false)) {
-            final ConfigurationSection itemSection = itemsSection.getConfigurationSection(itemId);
-
-            try {
-                items.put(itemId, new Droppable(
-                        NBT.parseNBT(itemSection.getString("NBT")),
-                        itemSection.getDouble("probability"),
-                        itemSection.getStringList("commands")
-                ));
-            } catch (NbtApiException | NullPointerException exception) {
-                    plugin.getLogger().severe("There was an error processing the item: " + itemId);
-            }
-        }
-
-        final ConfigurationSection blocksSection = config.getConfigurationSection("drops-block");
-        final ConfigurationSection entitiesSection = config.getConfigurationSection("drops-entity");
-
-        processDrop(DropType.BLOCK, blocksSection, items);
-        processDrop(DropType.ENTITY, entitiesSection, items);
+        process(DropType.BLOCK, droppables);
+        process(DropType.ENTITY, droppables);
     }
 
-    private void processDrop(DropType dropType, ConfigurationSection drops, Map<String, Droppable> items) {
-        if (drops == null)
-            return;
+    private void process(DropType dropType, List<Droppable> droppables) {
+        final ConfigurationSection drops = plugin.getConfig()
+                .getConfigurationSection("drops-" + dropType.toString().toLowerCase());
 
-        for (String dropId : drops.getKeys(false)) {
+        drops.getKeys(false).forEach(dropId -> {
             final ConfigurationSection drop = drops.getConfigurationSection(dropId);
-            final List<Droppable> droppables = new ArrayList<>();
+            final boolean keep = drop.getBoolean("keep-original-drops");
+            final List<String> worlds = drop.getStringList("worlds");
 
-            try {
-                for (String id : drop.getStringList("items"))
-                    if (items.containsKey(id))
-                        droppables.add(items.get(id));
-
-                final boolean keepOriginalDrops = drop.getBoolean("keep-original-drops");
-                final List<String> worlds = drop.getStringList("worlds");
-
-                if (dropType == DropType.BLOCK) {
-                    Material block = Material.valueOf(drop.getString("block"));
-                    putDrop(DropType.BLOCK, new DropBlock(dropId, keepOriginalDrops, worlds, droppables, block));
-                }
-
-                else if (dropType == DropType.ENTITY) {
-                    EntityType entity = EntityType.valueOf(drop.getString("entity"));
-                    putDrop(DropType.ENTITY, new DropEntity(dropId, keepOriginalDrops, worlds, droppables, entity));
-                }
-            } catch (NbtApiException | NullPointerException | IllegalArgumentException exception) {
-                plugin.getLogger().severe("There was an error loading the "
-                        + dropType.name().toLowerCase() + ": " + dropId);
+            final List<Droppable> selected = new ArrayList<>();
+            for (String id : drop.getStringList("items")) {
+                droppables.stream()
+                        .filter(item -> item.getId().equals(id))
+                        .findFirst().ifPresent(selected::add);
             }
-        }
+
+            if (dropType == DropType.ENTITY)
+                updateDrop(dropType, new DropEntity(dropId, keep, worlds, selected, EntityType.valueOf(drop.getString("entity"))));
+
+            else if (dropType == DropType.BLOCK)
+                updateDrop(dropType, new DropBlock(dropId, keep, worlds, selected, Material.valueOf(drop.getString("block"))));
+        });
     }
 }
