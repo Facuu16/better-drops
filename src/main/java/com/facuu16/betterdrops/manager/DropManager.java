@@ -102,11 +102,15 @@ public class DropManager {
                         .findFirst().ifPresent(selected::add);
             }
 
-            if (dropType == DropType.ENTITY)
-                updateDrop(dropType, new DropEntity(dropId, keep, worlds, selected, EntityType.valueOf(drop.getString("entity"))));
+            switch (dropType) {
+                case ENTITY:
+                    updateDrop(dropType, new DropEntity(dropId, keep, worlds, selected, EntityType.valueOf(drop.getString("entity"))));
+                    break;
 
-            else if (dropType == DropType.BLOCK)
-                updateDrop(dropType, new DropBlock(dropId, keep, worlds, selected, Material.valueOf(drop.getString("block"))));
+                case BLOCK:
+                    updateDrop(dropType, new DropBlock(dropId, keep, worlds, selected, Material.valueOf(drop.getString("block"))));
+                    break;
+            }
         });
     }
 }
