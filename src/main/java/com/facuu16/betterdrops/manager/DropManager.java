@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class DropManager {
-    private final Map<DropType, Map<String, Drop>> drops = new EnumMap<>(DropType.class);
+    private final Map<DropType, Map<String, Drop>> DROPS = new EnumMap<>(DropType.class);
 
     private final BetterDrops plugin;
 
@@ -23,7 +23,7 @@ public class DropManager {
         this.plugin = plugin;
 
         for (DropType type : DropType.values())
-            drops.put(type, new HashMap<>());
+            DROPS.put(type, new HashMap<>());
     }
 
     public static DropManager getInstance(BetterDrops plugin) {
@@ -42,27 +42,27 @@ public class DropManager {
     }
 
     public void updateDrop(DropType type, Drop drop) {
-        drops.get(type).put(drop.getId(), drop);
+        DROPS.get(type).put(drop.getId(), drop);
     }
 
     public void removeDrop(DropType type, String id) {
-        drops.get(type).remove(id);
+        DROPS.get(type).remove(id);
     }
 
     public Drop getDrop(DropType type, String id) {
-        return drops.get(type).get(id);
+        return DROPS.get(type).get(id);
     }
 
     public Map<String, Drop> getDrops(DropType type) {
-        return drops.get(type);
+        return DROPS.get(type);
     }
 
     public boolean containsDrop(DropType type, String id) {
-        return drops.get(type).containsKey(id);
+        return DROPS.get(type).containsKey(id);
     }
 
     public void removeDrops(DropType type) {
-        drops.get(type).clear();
+        DROPS.get(type).clear();
     }
 
     public void reload() throws NullPointerException, NbtApiException, IllegalArgumentException {
