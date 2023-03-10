@@ -15,8 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
-
 public class BlockBreak implements Listener {
     private final BetterDrops plugin;
 
@@ -26,49 +24,44 @@ public class BlockBreak implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        DropManager manager = DropManager.getInstance(plugin);
-
         if (event.isCancelled())
             return;
 
-        for (Map.Entry<String, Drop> entry : manager.getDrops(DropType.BLOCK).entrySet()) {
-            Block block = event.getBlock();
-            DropBlock dropBlock = (DropBlock) entry.getValue();
+        Block block = event.getBlock();
+        Location location = block.getLocation();
 
-            if (dropBlock.getBlock() != block.getType())
-                continue;
+        DropManager.getInstance(plugin).getDrops(DropType.BLOCK).values().stream()
+                .map(drop -> (DropBlock) drop)
+                .filter(drop -> drop.getBlock() == block.getType()
+                        && drop.getWorlds().contains(location.getWorld().getName()))
+                .findFirst()
+                .ifPresent(drop -> {
+                    boolean removed = false;
 
-            Location location = block.getLocation();
+                    for (Droppable droppable : drop.getItems()) {
+                        if (droppable.getProbability() < Math.random() * 100)
+                            continue;
 
-            if (!dropBlock.getWorlds().contains(location.getWorld().getName()))
-                continue;
+                        if (!drop.isKeep() && !removed) {
+                            removed = true;
+                            event.setCancelled(true);
+                            block.setType(Material.AIR);
+                        }
 
-            boolean removed = false;
+                        NBTCompound itemNBT = (NBTCompound) droppable.getNBT();
+                        ItemStack item = NBTItem.convertNBTtoItem(itemNBT);
 
-            for (Droppable droppable : dropBlock.getItems()) {
-                if (droppable.getProbability() < Math.random() * 100)
-                    continue;
+                        location.getWorld().dropItemNaturally(location, item);
 
-                if (!dropBlock.getKeep() && !removed) {
-                    removed = true;
-                    event.setCancelled(true);
-                    block.setType(Material.AIR);
-                }
+                        for (String command : droppable.getCommands()) {
+                            Player player = event.getPlayer();
 
-                NBTCompound itemNBT = (NBTCompound) droppable.getNBT();
-                ItemStack item = NBTItem.convertNBTtoItem(itemNBT);
+                            if (player != null)
+                                command = command.replace("<player>", player.getName());
 
-                location.getWorld().dropItemNaturally(location, item);
-
-                for (String command : droppable.getCommands()) {
-                    Player player = event.getPlayer();
-
-                    if (player != null)
-                        command = command.replace("<player>", player.getName());
-
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-                }
-            }
-        }
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                        }
+                    }
+                });
     }
 }

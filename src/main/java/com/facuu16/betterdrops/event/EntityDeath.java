@@ -4,7 +4,6 @@ import com.facuu16.betterdrops.BetterDrops;
 import com.facuu16.betterdrops.drop.DropEntity;
 import com.facuu16.betterdrops.drop.Droppable;
 import com.facuu16.betterdrops.drop.DropType;
-import com.facuu16.betterdrops.drop.Drop;
 import com.facuu16.betterdrops.manager.DropManager;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
@@ -17,7 +16,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 
 public class EntityDeath implements Listener {
     private final BetterDrops plugin;
@@ -30,40 +28,41 @@ public class EntityDeath implements Listener {
     public void onEntityDeath(EntityDeathEvent event) {
         DropManager manager = DropManager.getInstance(plugin);
 
-        for (Map.Entry<String, Drop> entry : manager.getDrops(DropType.ENTITY).entrySet()) {
-            Entity entity = event.getEntity();
-            DropEntity dropEntity = (DropEntity) entry.getValue();
+        Entity entity = event.getEntity();
+        String world = entity.getWorld().getName();
 
-            if (dropEntity.getEntity() != entity.getType())
-                continue;
+        manager.getDrops(DropType.ENTITY).values().stream()
+                .map(drop -> (DropEntity) drop)
+                .filter(drop -> drop.getEntity() == event.getEntityType()
+                        && drop.getWorlds().contains(world))
+                .findFirst()
+                .ifPresent(drop -> {
+                    List<ItemStack> eventDrops = event.getDrops();
+                    boolean removed = false;
 
-            if (!dropEntity.getWorlds().contains(entity.getWorld().getName()))
-                continue;
+                    for (Droppable droppable : drop.getItems()) {
+                        if (droppable.getProbability() < Math.random() * 100)
+                            continue;
 
-            List<ItemStack> eventDrops = event.getDrops();
-            boolean removed = false;
+                        if (!drop.isKeep() && !removed) {
+                            removed = true;
+                            eventDrops.clear();
+                        }
 
-            for (Droppable droppable : dropEntity.getItems()) {
-                if (droppable.getProbability() < Math.random() * 100)
-                    continue;
+                        NBTCompound itemNBT = (NBTCompound) droppable.getNBT();
+                        ItemStack item = NBTItem.convertNBTtoItem(itemNBT);
 
-                if (!dropEntity.getKeep() && !removed) {
-                    removed = true;
-                    eventDrops.clear();
-                }
+                        eventDrops.add(item);
 
-                NBTCompound itemNBT = (NBTCompound) droppable.getNBT();
-                eventDrops.add(NBTItem.convertNBTtoItem(itemNBT));
+                        for (String command : droppable.getCommands()) {
+                            Player player = event.getEntity().getKiller();
 
-                for (String command : droppable.getCommands()) {
-                    Player player = event.getEntity().getKiller();
+                            if (player != null)
+                                command = command.replace("<player>", player.getName());
 
-                    if (player != null)
-                        command = command.replace("<player>", player.getName());
-
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-                }
-            }
-        }
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                        }
+                    }
+                });
     }
 }

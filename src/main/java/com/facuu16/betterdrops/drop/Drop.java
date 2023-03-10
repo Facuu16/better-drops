@@ -3,13 +3,13 @@ package com.facuu16.betterdrops.drop;
 import java.util.List;
 
 public abstract class Drop {
-    private String id;
+    private final String id;
 
-    private boolean keepOriginalDrops;
+    private final boolean keepOriginalDrops;
 
-    private List<String> worlds;
+    private final List<String> worlds;
 
-    private List<Droppable> items;
+    private final List<Droppable> items;
 
     protected Drop(String id, boolean keepOriginalDrops, List<String> worlds, List<Droppable> items) {
         this.id = id;
@@ -18,27 +18,11 @@ public abstract class Drop {
         this.items = items;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setKeep(boolean keepOriginalDrops) {
-        this.keepOriginalDrops = keepOriginalDrops;
-    }
-
-    public void setWorlds(List<String> worlds) {
-        this.worlds = worlds;
-    }
-
-    public void setItems(List<Droppable> items) {
-        this.items = items;
-    }
-
     public String getId() {
         return id;
     }
 
-    public boolean getKeep() {
+    public boolean isKeep() {
         return keepOriginalDrops;
     }
 

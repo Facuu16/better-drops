@@ -33,8 +33,7 @@ public class DropManager {
             try {
                 instance.reload();
             } catch (Exception exception) {
-                plugin.getLogger()
-                        .log(Level.SEVERE, "An error occurred while reloading the configuration", exception);
+                plugin.getLogger().log(Level.SEVERE, "An error occurred while reloading the configuration", exception);
             }
         }
 
