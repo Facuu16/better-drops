@@ -71,15 +71,14 @@ public class DropManager {
 
         final List<Droppable> droppables = items.getKeys(false)
                 .stream()
-                .map(itemId -> {
-                    final ConfigurationSection item = items.getConfigurationSection(itemId);
-                    return new Droppable(
-                            item.getName(),
-                            NBT.parseNBT(item.getString("NBT")),
-                            item.getDouble("probability"),
-                            item.getStringList("commands")
-                    );
-                })
+                .map(items::getConfigurationSection)
+                .map(item ->
+                        new Droppable(
+                                item.getName(),
+                                NBT.parseNBT(item.getString("NBT")),
+                                item.getDouble("probability"),
+                                item.getStringList("commands")
+                        ))
                 .collect(Collectors.toList());
 
         process(DropType.BLOCK, droppables);
