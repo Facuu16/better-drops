@@ -38,10 +38,10 @@ public class BetterDrops extends JavaPlugin {
     }
 
     private void registerConfig() {
-        File config = new File(this.getDataFolder(), "config.yml");
+        File config = new File(getDataFolder(), "config.yml");
 
         if (!config.exists()) {
-            this.getConfig().options().copyDefaults(true);
+            getConfig().options().copyDefaults(true);
             saveDefaultConfig();
             getLogger().info("Config.yml created.");
         }

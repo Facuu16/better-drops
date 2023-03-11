@@ -28,15 +28,15 @@ public class BetterDropsCommand implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "reload":
+                plugin.reloadConfig();
+
                 try {
                     DropManager.getInstance(plugin).reload();
+                    sender.sendMessage(plugin.translate("&aConfig reloaded successfully"));
                 } catch (Exception exception) {
                     plugin.getLogger()
                             .log(Level.SEVERE, "An error occurred while reloading the configuration", exception);
                 }
-
-                plugin.reloadConfig();
-                sender.sendMessage(plugin.translate("&aConfig reloaded successfully"));
                 break;
 
             case "nbt":

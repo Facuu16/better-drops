@@ -88,6 +88,8 @@ public class DropManager {
         final ConfigurationSection drops = plugin.getConfig()
                 .getConfigurationSection("drops-" + dropType.toString().toLowerCase());
 
+        removeDrops(dropType);
+
         drops.getKeys(false).forEach(dropId -> {
             final ConfigurationSection drop = drops.getConfigurationSection(dropId);
             final boolean keep = drop.getBoolean("keep-original-drops");
