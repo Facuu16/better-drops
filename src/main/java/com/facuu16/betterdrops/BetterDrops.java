@@ -8,6 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.bukkit.Bukkit.getPluginManager;
 
@@ -47,7 +49,7 @@ public class BetterDrops extends JavaPlugin {
         }
     }
 
-    public String translate(String text) {
-        return ChatColor.translateAlternateColorCodes('&', text);
+    public String translate(String value) {
+        return ChatColor.translateAlternateColorCodes('&', value);
     }
 }
