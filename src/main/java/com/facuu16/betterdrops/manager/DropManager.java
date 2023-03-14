@@ -52,8 +52,8 @@ public class DropManager {
         return DROPS.get(type).get(id);
     }
 
-    public Map<String, Drop> getDrops(DropType type) {
-        return DROPS.get(type);
+    public List<Drop> getDrops(DropType type) {
+        return Collections.unmodifiableList(new ArrayList<>(DROPS.get(type).values()));
     }
 
     public boolean containsDrop(DropType type, String id) {

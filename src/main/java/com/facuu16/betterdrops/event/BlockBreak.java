@@ -30,7 +30,7 @@ public class BlockBreak implements Listener {
         Block block = event.getBlock();
         Location location = block.getLocation();
 
-        DropManager.getInstance(plugin).getDrops(DropType.BLOCK).values().stream()
+        DropManager.getInstance(plugin).getDrops(DropType.BLOCK).stream()
                 .map(drop -> (DropBlock) drop)
                 .filter(drop -> drop.getBlock() == block.getType()
                         && drop.getWorlds().contains(location.getWorld().getName()))

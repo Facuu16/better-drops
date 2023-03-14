@@ -31,7 +31,7 @@ public class EntityDeath implements Listener {
         Entity entity = event.getEntity();
         String world = entity.getWorld().getName();
 
-        manager.getDrops(DropType.ENTITY).values().stream()
+        manager.getDrops(DropType.ENTITY).stream()
                 .map(drop -> (DropEntity) drop)
                 .filter(drop -> drop.getEntity() == event.getEntityType()
                         && drop.getWorlds().contains(world))
